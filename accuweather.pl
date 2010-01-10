@@ -204,7 +204,29 @@ foreach $type (@types){$mythoutput{$type}='N/A' ;};
 	        }
            }
 
-    # day mappings to be made
+    #Wind Dir translation
+        my %wind_dirs = ("N",["North","Nord","Noord","Nord"],
+					"NNE",["NorthNorthEast","Nord-nord-est","Noordnoordoost","Dienstag"],
+					"NE", ["NorthEast","Nord-est","Noordoost","Nordost"],
+					"ENE",["EastNorthEast","Est-nord-est","Oostnoordoost","Ost-Nordost"],
+					"E",["East","Est","Oost","Ost"],
+					"ESE",["EastSouthEast","Est-sud-est","Oostzuidoost","Ost-Sudost"],
+					"SE",["SouthEast","Sud-est","Zuidoost","Südost"],
+					"SSE",["SouthSouthEast","Sud-sud-est","Zuidzuidoost","Süd-Südost"],
+					"S",["South","Sud","Zuid","Süd"],
+					"SSW",["SouthSouthwest","Sud-sud-ouest","Zuidzuidwest","Süd-Südwest"],
+					"SW",["Southwest","Sud-ouest","Zuidwest","Südwest"],
+					"WSW",["WestSouthwest","Ouest-sud-ouest","Westzuidwest","West-Südwest"],
+					"W",["West","Ouest","West","West"],
+					"WNW",["WestNorthwest","Ouest-nord-ouest","Westnoordwest","West-Nordwest"],
+					"NW",["Northwest","Nord-ouest","Noordwest","Nordwest"],
+					"NNW",["NorthNorthwest","Nord-nord-ouest","Noordnoordwest","Nord-Nordwest"]);
+
+    # conversions / translation Wind dirs
+        if ( exists $wind_dirs { $mythoutput {"wind_dir"}}[$mylanguage]) {
+	      $mythoutput {"wind_dir"} = $wind_dirs {$mythoutput {"wind_dir"}}[$mylanguage]; };
+
+		  # day mappings to be made
         my %daycodes = ("Monday",["Monday","Lundi","Maandag","Montag"],
 	                "Tuesday",["Tuesday","Mardi","Dinsdag","Dienstag"],
 	                "Wednesday",["Wednesday","Mercredi","Woensdag","Mittwoch"],
