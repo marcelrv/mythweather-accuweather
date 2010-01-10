@@ -14,11 +14,8 @@
 #
 # Author Marcel Verpaalen#
 # Parts based on nwsxml.pl by Lucien Dunning
-#includes several updates from   gilles74 - mythtv-fr
+#includes several updates/patches/fixes from   gilles74 - mythtv-fr, brandyndave, marius.hennecke,
 #
-
-# TODO: Conversion of units. Currently the units are ignored
-
 use strict;
 use XML::Simple;
 use LWP::Simple;
@@ -117,23 +114,30 @@ getopts('Tvtlu:d:');
              $dir = $opt_d;
         }
 
-
+	 # Option u - units of measure to return, metric (1) or imperial (0)
+	    my $units;
+		if ( defined $opt_u ) {
+			if ( $opt_u eq "ENG" ) {
+				$units = 0;
+			}
+			else {
+				$units = 1;
+			}
+		}
 
 # main program - download data
 
 my $locid = shift;
 
 # we get here, we're doing an actual retrieval, everything must be defined
-	if (!(defined $opt_u && defined $locid && !$locid eq "")) {
+	if (!(defined $units && defined $locid && !$locid eq "")) {
 	    die "Invalid usage";
 	}
-
-	my $units = $opt_u;
 
 	my $type;
 foreach $type (@types){$mythoutput{$type}='N/A' ;};
 
-	my $url = 'http://forecastfox.accuweather.com/adcbin/forecastfox/weather_data.asp?metric=1&partner=forecastfox&location=';
+	my $url = "http://forecastfox.accuweather.com/adcbin/forecastfox/weather_data.asp?metric=" . $units . "&partner=forecastfox&location=";
 	my $base_url = "$url$locid" ;
 #my $base_url = 'file:////usr/share/mythtv/mythweather/scripts/accu.com/sample.xml';
 
