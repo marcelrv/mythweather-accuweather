@@ -31,20 +31,20 @@ use File::Basename;
 use lib dirname($0);
 
 #Put here your language key
-my $mylanguage = 0;   #(GB=0,FR=1,NL=2)
+my $mylanguage = 0;   #(GB=0,FR=1,NL=2,DE=3)
 
 #and here translations (key,[GB,FR,NL,]
 my %translationtable  = (
-	"observation_time",["Observation of","Observations du","Observatie van"],
-	"updatetime",["Updated","Previsions du","Vernieuwd"],
-	"unknown",["Unknown","Inconnu","Onbekend"]);
+	"observation_time",["Observation of","Observations du","Observatie van","Beobachtung von"],
+	"updatetime",["Updated","Previsions du","Vernieuwd","Aktualisiert"],
+	"unknown",["Unknown","Inconnu","Onbekend","Unbekannt"]);
 
 our ($opt_v, $opt_t, $opt_T, $opt_l, $opt_u, $opt_d);
 
 my (%mythoutput,$value,$keyword);
 
 my $name = 'Accu.com-Current-3D-6D';
-my $version = 0.2;
+my $version = 0.3;
 my $author = 'Marcel Verpaalen';
 my $email = 'marcel.verpaalen@gmail.com';
 
@@ -68,7 +68,7 @@ my $email = 'marcel.verpaalen@gmail.com';
       my $dir = "./";
 
 
-# definition des options
+# definition of options
 getopts('Tvtlu:d:');
 
        # option v  -  script informations
@@ -93,7 +93,7 @@ getopts('Tvtlu:d:');
 
               my $response = $ua->get($location_base_url . $search);
                  die unless defined $response;
-              my $xml = XMLin($response->decoded_content );
+              my $xml = XMLin($response->decoded_content, forcearray => ['location']);
 
               if (!$xml) {
                    die "Not xml";
@@ -201,18 +201,60 @@ foreach $type (@types){$mythoutput{$type}='N/A' ;};
            }
 
     # day mappings to be made
-        my %daycodes = ("Monday",["Monday","Lundi","Maandag"],
-	                "Tuesday",["Tuesday","Mardi","Dinsdag"],
-	                "Wednesday",["Wednesday","Mercredi","Woensdag"],
-	                "Thursday",["Thursday","Jeudi","donderdag"],
-	                "Friday",["Friday","Vendredi","Vrijdag"],
-	                "Saturday",["Saturday","Samedi","Zaterdag"],
-	                "Sunday",["Sunday","Dimanche","Zondag"]);
+        my %daycodes = ("Monday",["Monday","Lundi","Maandag","Montag"],
+	                "Tuesday",["Tuesday","Mardi","Dinsdag","Dienstag"],
+	                "Wednesday",["Wednesday","Mercredi","Woensdag","Mittwoch"],
+	                "Thursday",["Thursday","Jeudi","donderdag","Donnerstag"],
+	                "Friday",["Friday","Vendredi","Vrijdag","Freitag"],
+	                "Saturday",["Saturday","Samedi","Zaterdag","Samstag"],
+	                "Sunday",["Sunday","Dimanche","Zondag","Sonntag"]);
 
     # conversions days/ mapping
         if ( exists $daycodes { $mythoutput {"daycode"}}[$mylanguage]) {
 	      $mythoutput {"daycode"} = $daycodes {$mythoutput {"daycode"}}[$mylanguage]; };
 
+	# weather text mappings
+	my %weathercodes = (
+		"Sunny",["Sunny","Sunny","Sunny","Sonnig"],
+		"Mostly Sunny",["Mostly Sunny","Mostly Sunny","Mostly Sunny","Meist Sonnig"],
+		"Partly Sunny",["Partly Sunny","Partly Sunny","Partly Sunny","Teilweise Sonnig"],
+		"Intermittent Clouds",["Intermittent Clouds","Intermittent Clouds","Intermittent Clouds","Zwischenzeitlich bewölkt"],
+		"Hazy Sunshine",["Hazy Sunshine","Hazy Sunshine","Hazy Sunshine","Diesig"],
+		"Mostly Cloudy",["Mostly Cloudy","Mostly Cloudy","Mostly Cloudy","Meist bewölkt"],
+		"Cloudy (AM and PM)",["Cloudy (AM and PM)","Cloudy (AM and PM)","Cloudy (AM and PM)","Bewölkt"],
+		"Dreary (AM and PM)",["Dreary (AM and PM)","Dreary (AM and PM)","Dreary (AM and PM)","Trüb"],
+		"Fog (AM and PM)",["Fog (AM and PM)","Fog (AM and PM)","Fog (AM and PM)","Nebelig"],
+		"Showers (AM and PM)",["Showers (AM and PM)","Showers (AM and PM)","Showers (AM and PM)","Schauer"],
+		"Mostly Cloudy with Showers",["Mostly Cloudy with Showers","Mostly Cloudy with Showers","Mostly Cloudy with Showers","Meist bewölkt mit Schauern"],
+		"Partly Sunny with Showers",["Partly Sunny with Showers","Partly Sunny with Showers","Partly Sunny with Showers","Teilweise sonnig mit Schauern"],
+		"Thunderstorms (AM and PM)",["Thunderstorms (AM and PM)","Thunderstorms (AM and PM)","Thunderstorms (AM and PM)","Gewitter"],
+		"Mostly Cloudy with Thunder Showers",["Mostly Cloudy with Thunder Showers","Mostly Cloudy with Thunder Showers","Meist bewölkt mit Gewitterschauern","Mostly Cloudy with Thunder Showers"],
+		"Partly Sunny with Thunder Showers",["Partly Sunny with Thunder Showers","Partly Sunny with Thunder Showers","Partly Sunny with Thunder Showers","Teilweise Sonnig mit Gewitterschauern"],
+		"Rain (AM and PM)",["Rain (AM and PM)","Rain (AM and PM)","Rain (AM and PM)","Regen"],
+		"Flurries (AM and PM)",["Flurries (AM and PM)","Flurries (AM and PM)","Flurries (AM and PM)","Schneetreiben"],
+		"Mostly Cloudy with Flurries",["Mostly Cloudy with Flurries","Mostly Cloudy with Flurries","Mostly Cloudy with Flurries","Meist bewölkt mit Schneetreiben"],
+		"Partly Sunny with Flurries",["Partly Sunny with Flurries","Partly Sunny with Flurries","Partly Sunny with Flurries","Teilweise sonnig mit Schneetreiben"],
+		"Snow (AM and PM)",["Snow (AM and PM)","Snow (AM and PM)","Snow (AM and PM)","Schnee"],
+		"Mostly Cloudy with Snow",["Mostly Cloudy with Snow","Mostly Cloudy with Snow","Mostly Cloudy with Snow","Meist bewölkt mit Schnee"],
+		"Ice (AM and PM)",["Ice (AM and PM)","Ice (AM and PM)","Ice (AM and PM)","Eis"],
+		"Sleet (AM and PM)",["Sleet (AM and PM)","Sleet (AM and PM)","Sleet (AM and PM)","Schneeregen"],
+		"Freezing Rain (AM and PM)",["Freezing Rain (AM and PM)","Freezing Rain (AM and PM)","Freezing Rain (AM and PM)","Eisregen"],
+		"Rain and Snow Mixed (AM and PM)",["Rain and Snow Mixed (AM and PM)","Rain and Snow Mixed (AM and PM)","Rain and Snow Mixed (AM and PM)","Schneeregen"],
+		"Hot (AM and PM)",["Hot (AM and PM)","Hot (AM and PM)","Hot (AM and PM)","Heiß"],
+		"Cold (AM and PM)",["Cold (AM and PM)","Cold (AM and PM)","Cold (AM and PM)","Kalt"],
+		"Windy (AM and PM)",["Windy (AM and PM)","Windy (AM and PM)","Windy (AM and PM)","Windig"],
+		"Clear",["Clear","Clear","Clear","Klar"],
+		"Mostly Clear",["Mostly Clear","Mostly Clear","Mostly Clear","Meist klar"],
+		"Partly Cloudy",["Partly Cloudy","Partly Cloudy","Partly Cloudy","Teilweise bewölkt"],
+		"Intermittent Clouds",["Intermittent Clouds","Intermittent Clouds","Intermittent Clouds","Zwischenzeitlich bewölkt"],
+		"Hazy",["Hazy","Hazy","Hazy","Diesig"],
+		"Partly Cloudy with Showers",["Partly Cloudy with Showers","Partly Cloudy with Showers","Partly Cloudy with Showers","Teilweise bewölkt mit Schauern"],
+		"Partly Cloudy with Thunder Showers",["Partly Cloudy with Thunder Showers","Partly Cloudy with Thunder Showers","Partly Cloudy with Thunder Showers","PTeilweise bewölkt mit Gewitterschauern"]
+	);
+
+	# conversion weather text
+	if ( exists $weathercodes { $mythoutput {"weather"}}[$mylanguage]) {
+		$mythoutput {"weather"} = $weathercodes {$mythoutput {"weather"}}[$mylanguage]; };
 
     #icon mappings to be made
              my %icons = ("01","sunny.png",
