@@ -41,7 +41,7 @@ our ($opt_v, $opt_t, $opt_T, $opt_l, $opt_u, $opt_d);
 my (%mythoutput,$value,$keyword);
 
 my $name = 'Accu.com-Current-3D-6D';
-my $version = 0.3;
+my $version = 0.4;
 my $author = 'Marcel Verpaalen';
 my $email = 'marcel.verpaalen@gmail.com';
 
@@ -97,6 +97,8 @@ getopts('Tvtlu:d:');
               }
 
               foreach my $item (@{$xml->{citylist}->{location}}){
+              # we arbitrarily replace all '|' chars with '~' to sidestep argument passing problems
+                 $item->{location} =~ s/\|/\~/g;
                  printf "%s::%s", $item->{location},  $item->{city} . ", " .  $item->{state} . "\n" ; 
               }
               exit 0;
@@ -128,6 +130,9 @@ getopts('Tvtlu:d:');
 # main program - download data
 
 my $locid = shift;
+
+# we have to restore all '~' chars to the original '|' before assembling the URL
+$locid =~ s/\~/\|/g;
 
 # we get here, we're doing an actual retrieval, everything must be defined
 	if (!(defined $units && defined $locid && !$locid eq "")) {
