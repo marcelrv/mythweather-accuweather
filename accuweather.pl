@@ -41,7 +41,7 @@ our ($opt_v, $opt_t, $opt_T, $opt_l, $opt_u, $opt_d);
 my (%mythoutput,$value,$keyword);
 
 my $name = 'Accu.com-Current-3D-6D';
-my $version = 0.4;
+my $version = 0.5;
 my $author = 'Marcel Verpaalen';
 my $email = 'marcel.verpaalen@gmail.com';
 
@@ -60,7 +60,7 @@ my $email = 'marcel.verpaalen@gmail.com';
 		'date-3', 'icon-3', 'low-3', 'high-3',
         	'date-4', 'icon-4', 'low-4', 'high-4',
         	'date-5', 'icon-5', 'low-5', 'high-5', 
-		);
+		 'copyrightlogo');
 
       my $dir = "./";
 
@@ -365,6 +365,7 @@ foreach $type (@types){$mythoutput{$type}='N/A' ;};
 			else { $mythoutput {"icon-" . $i} = "unknown.png" ; }
 		}
 
+	$mythoutput{'copyrightlogo'} = "none";
 
 	#output the data
 
